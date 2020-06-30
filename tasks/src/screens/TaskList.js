@@ -1,5 +1,10 @@
 import React, { Component } from 'react'
-import { View, Text, ImageBackground, StyleSheet } from 'react-native'
+import { 
+    View
+    , Text
+    , ImageBackground
+    , StyleSheet
+    , FlatList } from 'react-native'
 import TodayImage from '../../assets/imgs/today.jpg'
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -7,6 +12,76 @@ import commomStyles from '../CommomStyles'
 import Task from '../components/Task'
 
 export default class TaskList extends Component {
+    state = {
+        tasks: [
+            {
+                id: Math.random()
+                , desc: 'Task Um'
+                , estimateAt: new Date()
+            }
+            , {
+                id: Math.random()
+                , desc: 'Task Dois'
+                , estimateAt: new Date()
+                , doneAt: new Date()
+            },
+            {
+                id: Math.random()
+                , desc: 'Task Um'
+                , estimateAt: new Date()
+            }
+            , {
+                id: Math.random()
+                , desc: 'Task Dois'
+                , estimateAt: new Date()
+                , doneAt: new Date()
+            },
+            {
+                id: Math.random()
+                , desc: 'Task Um'
+                , estimateAt: new Date()
+            }
+            , {
+                id: Math.random()
+                , desc: 'Task Dois'
+                , estimateAt: new Date()
+                , doneAt: new Date()
+            },
+            {
+                id: Math.random()
+                , desc: 'Task Um'
+                , estimateAt: new Date()
+            }
+            , {
+                id: Math.random()
+                , desc: 'Task Dois'
+                , estimateAt: new Date()
+                , doneAt: new Date()
+            },
+            {
+                id: Math.random()
+                , desc: 'Task Um'
+                , estimateAt: new Date()
+            }
+            , {
+                id: Math.random()
+                , desc: 'Task Dois'
+                , estimateAt: new Date()
+                , doneAt: new Date()
+            },
+            {
+                id: Math.random()
+                , desc: 'Task Um'
+                , estimateAt: new Date()
+            }
+            , {
+                id: Math.random()
+                , desc: 'Task Dois'
+                , estimateAt: new Date()
+                , doneAt: new Date()
+            }
+        ]
+    }
     render() {
         const today = moment().locale('pt-br').format('dddd, D [de] MMMM [de] YYYY')
         return(
@@ -18,8 +93,10 @@ export default class TaskList extends Component {
                     </View>
                 </ImageBackground>
                 <View style={styles.taskList}>
-                    <Task desc="Task1" estimateAt={new Date()} />
-                    <Task desc="Task2" estimateAt={new Date()} doneAt={new Date()} />
+                    <FlatList data={this.state.tasks}
+                        style={styles.flatList}
+                        keyExtractor={item => `${item.id}`}
+                        renderItem={({item}) => <Task {...item} />} />
                 </View>
             </View>
         )
@@ -53,5 +130,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginLeft: 20,
         marginBottom: 30
+    }
+    , flatList: {
+        flex: 1
     }
 })
