@@ -13,6 +13,7 @@ import moment from 'moment'
 import 'moment/locale/pt-br'
 import commomStyles from '../CommomStyles'
 import Task from '../components/Task'
+import AddTask from '../Modals/AddTask'
 
 const initialTasks = [
     {
@@ -88,6 +89,7 @@ export default class TaskList extends Component {
         showDoneTasks: true        
         ,tasks: [...initialTasks]
         , visibleTasks: [...initialTasks]
+        , visibleAddTask: false
     }
 
     toogleTask = id => {
@@ -108,10 +110,21 @@ export default class TaskList extends Component {
         this.setState({ showDoneTasks: !this.state.showDoneTasks }, this.filterTasks)
     }
 
+    onCancelAddTask = () => {
+        this.setState({ visibleAddTask: false })
+    }
+
+    showAddTask = () => {
+        this.setState({ visibleAddTask: true })
+    }
+
     render() {
         const today = moment().locale('pt-br').format('dddd, D [de] MMMM [de] YYYY')
         return(
             <View style={styles.container}>
+                <AddTask 
+                    isVisible={this.state.visibleAddTask}
+                    onCancel={this.onCancelAddTask} />
                 <ImageBackground style={styles.background} source={TodayImage}>
                     <View style={styles.iconBar}> 
                         <TouchableOpacity onPress={this.toggleDoneItems}>
@@ -132,6 +145,14 @@ export default class TaskList extends Component {
                         keyExtractor={item => `${item.id}`}
                         renderItem={({item}) => <Task {...item} toogleTask={this.toogleTask} />} />
                 </View>
+                <TouchableOpacity 
+                    style={styles.addButton}
+                    onPress={this.showAddTask}>
+                    <Icon 
+                        name="plus" 
+                        size={20}
+                        color={commomStyles.colors.secundary}></Icon>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -173,5 +194,16 @@ const styles = StyleSheet.create({
         , marginHorizontal: 20
         , justifyContent: 'flex-end'
         , marginTop: Platform.OS === 'ios' ? 40 : 10
+    }
+    , addButton: {
+        position: 'absolute'
+        , right: 30
+        , bottom: 30
+        , width: 50
+        , height:50
+        , borderRadius: 25
+        , backgroundColor: commomStyles.colors.today
+        , justifyContent: 'center'
+        , alignItems: 'center'
     }
 })
