@@ -6,7 +6,8 @@ import {
     , StyleSheet
     , FlatList
     , TouchableOpacity
-    , Platform } from 'react-native'
+    , Platform
+    , Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import TodayImage from '../../assets/imgs/today.jpg'
 import moment from 'moment'
@@ -25,62 +26,7 @@ const initialTasks = [
         id: Math.random()
         , desc: 'Task Dois'
         , estimateAt: new Date()
-        , doneAt: new Date()
-    },
-    {
-        id: Math.random()
-        , desc: 'Task Um'
-        , estimateAt: new Date()
-    }
-    , {
-        id: Math.random()
-        , desc: 'Task Dois'
-        , estimateAt: new Date()
-        , doneAt: new Date()
-    },
-    {
-        id: Math.random()
-        , desc: 'Task Um'
-        , estimateAt: new Date()
-    }
-    , {
-        id: Math.random()
-        , desc: 'Task Dois'
-        , estimateAt: new Date()
-        , doneAt: new Date()
-    },
-    {
-        id: Math.random()
-        , desc: 'Task Um'
-        , estimateAt: new Date()
-    }
-    , {
-        id: Math.random()
-        , desc: 'Task Dois'
-        , estimateAt: new Date()
-        , doneAt: new Date()
-    },
-    {
-        id: Math.random()
-        , desc: 'Task Um'
-        , estimateAt: new Date()
-    }
-    , {
-        id: Math.random()
-        , desc: 'Task Dois'
-        , estimateAt: new Date()
-        , doneAt: new Date()
-    },
-    {
-        id: Math.random()
-        , desc: 'Task Um'
-        , estimateAt: new Date()
-    }
-    , {
-        id: Math.random()
-        , desc: 'Task Dois'
-        , estimateAt: new Date()
-        , doneAt: new Date()
+        , doneAt: new Date()    
     }
 ]
 
@@ -90,6 +36,7 @@ export default class TaskList extends Component {
         ,tasks: [...initialTasks]
         , visibleTasks: [...initialTasks]
         , visibleAddTask: false
+        , showDoneTasks: true
     }
 
     toogleTask = id => {
@@ -102,7 +49,7 @@ export default class TaskList extends Component {
     filterTasks = () => {
         let visibleTasks = [...this.state.tasks]
         if (!this.state.showDoneTasks)
-            visibleTasks = this.state.tasks.filter(t => t.doneAt == null)
+            visibleTasks = visibleTasks.filter(t => t.doneAt == null)
         this.setState({ visibleTasks })
     }
 
@@ -118,13 +65,32 @@ export default class TaskList extends Component {
         this.setState({ visibleAddTask: true })
     }
 
+    addTask = newTask => {
+        if (!newTask
+            || !newTask.desc
+            || !newTask.desc.trim()) {
+                Alert.alert('Dados inválidos. Task ou descrição vazia')
+                return
+            }
+        
+        const tasks = [...this.state.tasks]
+        tasks.push({
+            id: Math.random()
+            , desc: newTask.desc
+            , estimateAt: newTask.date
+            , doneAt: null
+        })
+        this.setState({ tasks, visibleAddTask: false }, this.filterTasks)
+    }
+
     render() {
         const today = moment().locale('pt-br').format('dddd, D [de] MMMM [de] YYYY')
         return(
             <View style={styles.container}>
                 <AddTask 
                     isVisible={this.state.visibleAddTask}
-                    onCancel={this.onCancelAddTask} />
+                    onCancel={this.onCancelAddTask}
+                    onSave={this.addTask} />
                 <ImageBackground style={styles.background} source={TodayImage}>
                     <View style={styles.iconBar}> 
                         <TouchableOpacity onPress={this.toggleDoneItems}>
