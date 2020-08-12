@@ -8,6 +8,7 @@ import {
     , TouchableOpacity
     , Platform
     , Alert } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import TodayImage from '../../assets/imgs/today.jpg'
 import moment from 'moment'
@@ -16,27 +17,24 @@ import commomStyles from '../CommomStyles'
 import Task from '../components/Task'
 import AddTask from '../Modals/AddTask'
 
-const initialTasks = [
-    {
-        id: Math.random()
-        , desc: 'Task Um'
-        , estimateAt: new Date()
-    }
-    , {
-        id: Math.random()
-        , desc: 'Task Dois'
-        , estimateAt: new Date()
-        , doneAt: new Date()    
-    }
-]
+const initialState = {
+    showDoneTasks: true        
+    ,tasks: []
+    , visibleTasks: []
+    , visibleAddTask: false
+    , showDoneTasks: true
+}
 
 export default class TaskList extends Component {
     state = {
-        showDoneTasks: true        
-        ,tasks: [...initialTasks]
-        , visibleTasks: [...initialTasks]
-        , visibleAddTask: false
-        , showDoneTasks: true
+        ...initialState
+    }
+
+    componentDidMount = async () => {
+        const stateString = await AsyncStorage.getItem('tasksState')
+        const state = JSON.parse(stateString) || initialState
+        this.setState(state, this.filterTasks)
+
     }
 
     toogleTask = id => {
@@ -51,6 +49,7 @@ export default class TaskList extends Component {
         if (!this.state.showDoneTasks)
             visibleTasks = visibleTasks.filter(t => t.doneAt == null)
         this.setState({ visibleTasks })
+        AsyncStorage.setItem('tasksState', JSON.stringify(this.state))
     }
 
     toggleDoneItems = () => {            
